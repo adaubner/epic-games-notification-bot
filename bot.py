@@ -1,4 +1,4 @@
-import epic_api_fetch#my own code, might break
+#import epic_api_fetch#my own code, might break
 import discord
 import json
 #####################################################################
