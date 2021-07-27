@@ -1,0 +1,5 @@
+{
+	"discord_token":"ODY3ODA0NjEyNDcwNzY3NjI2.YPmcBg.WMaKNbHSfA2IjOM5fe_3HkLPRY0",
+	"command_prefix":"!games ",
+	"whitelisted_channels":["bot","bots","robots","spam","Bot","Bots","Robots","Spam"]
+}
