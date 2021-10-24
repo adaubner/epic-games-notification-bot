@@ -3,3 +3,5 @@ Ongoing project to create a python based bot to send email notifications when fr
 Might host on AWS or raspberry, idk.
 
 test change for git
+
+test change from git to local
