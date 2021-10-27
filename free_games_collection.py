@@ -23,13 +23,22 @@ def insert_data(data):
 	cur.execute(f"INSERT INTO games VALUES (\"{data[0]}\",\"{data[1]}\",\"{data[2]}\",\"{data[3]}\",\"{data[4]}\",\"{data[5]}\")")#no semi colon needed, double vs single quotes does not matter
 	con.commit()
 
+def calculate_change():
+	# last = cur.execute(f"SELECT * FROM games ORDER BY column DESC LIMIT 1;")
+	last_id = cur.lastrowid
+	last = cur.execute(f"SELECT * FROM games WHERE rowid = {last_id}")
+	return ""
 
 
 def main():
 	global con, cur
 	con = sqlite3.connect(DB_PATH)
 	cur = con.cursor()
-	insert_data((datetime.now(timezone.utc).isoformat(),str(API.get_free_games()).replace('"',"'"),'3',epic_api_fetch.get_games(),'5','test'))#TODO find diference from last entry into database.
+	#gathering variables
+	time_stamp = datetime.now(timezone.utc).isoformat()
+	api_return = str(API.get_free_games()).replace('"',"'")#TODO calculate api_return change
+	insert_data((time_stamp, api_return,'3',epic_api_fetch.get_games(),'5','test'))
+	calculate_change()
 	con.close()
 
 
