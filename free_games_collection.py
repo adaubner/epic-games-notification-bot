@@ -19,12 +19,12 @@ raise connectionError
 
 def insert_data(data):
 	"""Inserts one entry into games table of free_games.db
-	@param: tuple containing date, api_return, api_return_change, free_games, free_games_change, notes
+	@param: tuple containing index, date, api_return, api_return_change, free_games, free_games_change, notes
 	Date+time is stored in ISO format
 	Set notes to 'test' when making entry that should be deleted later
 	"""
 	#reference for sql https://www.w3schools.com/sql/sql_insert.asp
-	cur.execute(f"INSERT INTO {DB_NAME} VALUES ({data[0]},\"{data[1]}\",\"{data[2]}\",\"{data[3]}\",\"{data[4]}\",\"{data[5]}\",\"{data[6]}\")")#no semi colon needed, double vs single quotes does not matter
+	cur.execute(f"INSERT INTO {DB_NAME} VALUES (?, ?, ?, ?, ?, ?, ?)", data)  #no semi colon needed, double vs single quotes does not matter, use ? for values
 	con.commit()
 
 
@@ -58,7 +58,7 @@ def main():
 	cur = con.cursor()
 	#gathering variables
 	time_stamp = datetime.now(timezone.utc).isoformat()
-	api_return = str(API.get_free_games()).replace('"', "'")
+	api_return = str(API.get_free_games())
 	api_return_change = calculate_change(api_return, 'api_return')
 	free_games = str(epic_api_fetch.get_games())
 	free_games_change = calculate_change(free_games, 'free_games')
