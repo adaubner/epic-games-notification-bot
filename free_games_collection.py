@@ -5,16 +5,9 @@ from datetime import datetime, timezone
 import epic_api_fetch
 from epicstore_api import EpicGamesStoreAPI, OfferData
 
-# DB_PATH = r'C:\Users\Andy\Documents\_python\epic-games-bot\free_games.db'#_TODO fix path, change to relative.
-DB_PATH_LINUX = r'/home/andy/PycharmProjects/epic-games-notification-bot/free_games.db'
+DB_PATH = r'free_games.db'
 API=EpicGamesStoreAPI()
 DB_NAME = 'games'
-"""
-class connectionError(Exception):
-	#https://stackabuse.com/how-to-print-colored-text-in-python/
-	print("\n\033[1;31;43m Please uncomment the connection (ctrl+f \"con\"), this exception is here to prevent accidental spamming of database. \033[0;0m\n")
-raise connectionError
-"""
 
 
 def insert_data(data):
@@ -29,7 +22,7 @@ def insert_data(data):
 
 
 def get_last_entry(column):
-	"""Make request to database for
+	"""Make request to database for last entry of given column
 
 	"""
 	cur.execute(f'SELECT {column} FROM {DB_NAME} ORDER BY id DESC LIMIT 1')  #Get last entry by id column
@@ -54,7 +47,7 @@ def calculate_change(current, column):
 
 def main():
 	global con, cur
-	con = sqlite3.connect(DB_PATH_LINUX)
+	con = sqlite3.connect(DB_PATH)
 	cur = con.cursor()
 	#gathering variables
 	time_stamp = datetime.now(timezone.utc).isoformat()
