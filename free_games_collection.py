@@ -36,8 +36,10 @@ def get_last_index():
 
 
 def calculate_change(current, column):
-	"""
-	Docs blablabla
+	"""Finds the additions and deletions (delta) between two strings
+	@Param: String latest entry, String column name
+	Function will access the last entry in the specified column in the data base,
+	it will then compare the last entry to the current entry using the difflib library
 	"""
 	last = get_last_entry(column)
 	difference_gen = diff.ndiff(last, current)
