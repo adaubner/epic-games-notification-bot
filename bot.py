@@ -42,7 +42,7 @@ async def on_message(message):
 		command=content[len(CMD_TAG):]#stores everything but the command tag
 		#help
 		if command.startswith('help'):
-			await channel.send("this is the temporary help page")
+			await channel.send('this is the temporary help page')
 		#TODO add more commands
 
 
