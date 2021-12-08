@@ -43,6 +43,10 @@ async def on_message(message):
 		#help
 		if command.startswith('help'):
 			await channel.send('this is the temporary help page')
+		#get free games
+		if command.startswith('games'):
+			games = epic_api_fetch.get_games()
+			await channel.send(str(games))
 		#TODO add more commands
 
 
