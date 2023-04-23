@@ -1,7 +1,7 @@
 import discord
 from discord.ext import tasks
 import my_secrets
-
+from epic_games_checker import check_games
 
 
 
@@ -17,8 +17,6 @@ client = discord.Client(intents=intents)
 async def on_ready():
     print(f"logged in as {str(client.user)}")
     await check_epic_games.start()
-    # TODO Why does code not run here? vv
-    print(f"epic games checker started with polling rate of {CHECKING_INTERVAL}sec")
     
 @client.event
 async def on_message(message): #TODO use discord command system
@@ -33,7 +31,9 @@ async def on_message(message): #TODO use discord command system
 
 @tasks.loop(seconds=CHECKING_INTERVAL)
 async def check_epic_games():
-    print("hello")
+    new_free_games = check_games()
+    if new_free_games is not None:
+        print("new games discord message")
 
 
 
