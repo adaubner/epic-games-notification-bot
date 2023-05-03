@@ -1,6 +1,6 @@
 import epicstore_api
+import sqlite3
 from logging import warning
-from datetime import datetime
 
 api = epicstore_api.EpicGamesStoreAPI()
 
@@ -49,11 +49,10 @@ def parse_games(api_return):
         
         # At this point we know that the game is currently free
         # Generate a universal game object
-        free_until = datetime.fromisoformat(game["promotions"]["promotionalOffers"][0]["promotionalOffers"][0]["endDate"])
-        free_game = {
+        free_game = { # TODO add start of promotion!!!
             "title": game["title"],
             "description":game["description"],
-            "free_until":free_until.strftime("%d/%m/%Y")
+            "free_until":game["promotions"]["promotionalOffers"][0]["promotionalOffers"][0]["endDate"]
         }
         games.append(free_game)
     return games
@@ -64,8 +63,20 @@ def parse_games(api_return):
 
 # maybe?
 # TODO have a current promotions database, needs to be updated every time first.
-def check_or_add_to_sql():
-    return
+def check_or_add_to_sql(game):
+    # check if game is already in the database
+    # TODO have a better check for existing game, if details change you want to update it
+    cur.execute("""SELECT * FROM current_free_games WHERE title = ?;""", (game["title"],))
+    if(len(cur.fetchall()) == 0):
+        cur.execute(
+            """INSERT INTO current_free_games (title, description, free_until) VALUES(?,?,?);""",
+            (
+                game["title"],
+                game["description"],
+                game["free_until"]
+            )
+        )
+        con.commit()
 
 
 
@@ -77,5 +88,11 @@ def check_games():
 
 # TODO removeme
 if __name__ == '__main__':
+    global con
+    global cur
+    con = sqlite3.connect("database.db")
+    cur = con.cursor()
     games = get_free_games()
+    check_or_add_to_sql(games[0])
+    cur.close()
     pass
