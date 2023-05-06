@@ -1,2 +1,3 @@
 discord
 epicstore_api
+python-dotenv
