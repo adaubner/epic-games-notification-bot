@@ -4,7 +4,7 @@ import sqlite3
 def start():
     global con
     global cur
-    con = sqlite3.connect("database.db")
+    con = sqlite3.connect("persistent_data/database.db")
     cur = con.cursor()
 
 

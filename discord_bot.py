@@ -11,7 +11,7 @@ from epic_games_checker import check_games
 
 # Global variables
 CHECKING_INTERVAL = 2  # time in seconds between epic games checking
-
+WHITELIST_CHANNELS = r"persistent_data/whitelist_channels.json"
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -36,7 +36,7 @@ async def add_channel(interacion):
     await interacion.response.send_message(f'Will notify channel "{interacion.channel}" about new games.')
     guild_id = str(interacion.guild_id)
     channel_id = interacion.channel_id
-    with open(r"whitelist_channels.json") as f:
+    with open(WHITELIST_CHANNELS) as f:
         whitelist_channels = json.load(f)
     # Does the guild currently exist in the whitelist
     
@@ -46,7 +46,7 @@ async def add_channel(interacion):
     if channel_id in whitelist_channels[guild_id]:
         return
     whitelist_channels[guild_id].append(channel_id)
-    with open(r"whitelist_channels.json", "w") as f:
+    with open(WHITELIST_CHANNELS, "w") as f:
         json.dump(whitelist_channels, f)
     
 
@@ -63,7 +63,7 @@ async def on_ready():
 async def check_epic_games():
     new_free_games = check_games()
     if len(new_free_games) != 0:
-        with open(r"whitelist_channels.json") as f:
+        with open(WHITELIST_CHANNELS) as f:
             whitelist_channels = json.load(f)
         
         for guild_id, channels in whitelist_channels.items():
