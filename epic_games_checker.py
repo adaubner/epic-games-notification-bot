@@ -1,6 +1,7 @@
 import epicstore_api
-import sqlite3
 from logging import warning
+
+import sql_helper
 
 api = epicstore_api.EpicGamesStoreAPI()
 
@@ -43,48 +44,33 @@ def parse_games(api_return):
 
         # At this point we know that the game is currently free
         # Generate a universal game object
-        free_game = { 
+        # TODO seller
+        # TODO store link
+        free_game = {
+            "id": game["id"],
             "title": game["title"],
             "description": game["description"],
+            "image": next((image["url"] for image in game["keyImages"] if image["type"] == "OfferImageWide"), None),
             "free_after": game["promotions"]["promotionalOffers"][0]["promotionalOffers"][0]["startDate"],
             "free_until": game["promotions"]["promotionalOffers"][0]["promotionalOffers"][0]["endDate"],
         }
         games.append(free_game)
     return games
 
-
+# Is a given game promotion already in the database
 def is_new_free_game(game):
     # check if game is already in the database
     # TODO have a better check for existing game, if details change you want to update it
-    cur.execute(
-        """SELECT * FROM free_games WHERE title = ? AND free_after = ? AND free_until = ?;""",
-        (game["title"], game["free_after"], game["free_until"]),
-    )
-    if len(cur.fetchall()) == 0:
-        cur.execute(
-            """INSERT INTO free_games (title, description, free_after, free_until) VALUES(?,?,?,?);""",
-            (
-                game["title"],
-                game["description"],
-                game["free_after"],
-                game["free_until"],
-            ),
-        )
-        con.commit()
+    if not sql_helper.contains_game(game):
+        sql_helper.insert_game(game)
         return True
     return False
 
 
-# TODO sql methods?
-
-
 # check if there are any NEW free games, return them
 def check_games():
-    # Prepare SQL
-    global con
-    global cur
-    con = sqlite3.connect("database.db")
-    cur = con.cursor()
+    # Open SQL connection
+    sql_helper.start()
     # Get new Free games
     free_games = get_free_games()
     new_free_games = list()
@@ -92,5 +78,5 @@ def check_games():
         if is_new_free_game(game):
             new_free_games.append(game)
     # Close SQL
-    cur.close()
+    sql_helper.stop()
     return new_free_games
