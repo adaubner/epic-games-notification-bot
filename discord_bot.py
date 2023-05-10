@@ -10,7 +10,7 @@ from epic_games_checker import check_games
 
 
 # Global variables
-CHECKING_INTERVAL = 2  # time in seconds between epic games checking
+CHECKING_INTERVAL = 5*60  # time in seconds between epic games checking
 WHITELIST_CHANNELS = r"persistent_data/whitelist_channels.json"
 
 intents = discord.Intents.default()
