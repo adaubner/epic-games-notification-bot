@@ -5,8 +5,9 @@ from discord.ext import tasks
 from dotenv import load_dotenv
 from os import getenv
 import json
+from datetime import datetime
 
-from epic_games_checker import check_games
+from epic_games_checker import check_games, get_free_games
 
 
 # Global variables
@@ -26,12 +27,24 @@ tree = app_commands.CommandTree(client)
 async def help(interaction):
     await interaction.response.send_message("help page here")
 
+@tree.command(name="freegames")
+async def freegames(interaction):
+    await interaction.response.send_message("Checking for games...")
+    await interaction.channel.send(get_free_games())
+
+@tree.command(name="print_db")
+async def print_db(interaction):
+    import sql_helper
+    sql_helper.start()
+    await interaction.response.send_message(sql_helper.select_all())
+    sql_helper.stop()
 
 # TODO remove channel command
 @tree.command(
     name="add_channel",
     description="Notifies this channel about new games"
 )
+
 async def add_channel(interacion):
     await interacion.response.send_message(f'Will notify channel "{interacion.channel}" about new games.')
     guild_id = str(interacion.guild_id)
@@ -61,8 +74,11 @@ async def on_ready():
 
 @tasks.loop(seconds=CHECKING_INTERVAL)
 async def check_epic_games():
+    print("checking for new games...")
     new_free_games = check_games()
     if len(new_free_games) != 0:
+        print(f"{datetime.now()}found new free games: {new_free_games}")
+        
         with open(WHITELIST_CHANNELS) as f:
             whitelist_channels = json.load(f)
         

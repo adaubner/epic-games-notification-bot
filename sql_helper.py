@@ -15,8 +15,13 @@ def stop():
     con.close()
 
 
-# TODO throw exception when keys don't match
+def select_all():
+    cur.execute(
+        """SELECT * FROM free_games"""
+    )
+    return cur.fetchall()
 
+# TODO throw exception when keys don't match
 def select_game(game: dict):
     cur.execute(
         """SELECT * FROM free_games WHERE 
